@@ -4,6 +4,10 @@ import (
 	"crypto/rand"
 )
 
+// randRead reads cryptographically secure random bytes. It is a package
+// variable so tests can simulate a failing entropy source.
+var randRead = rand.Read
+
 // generatePolynomial constructs a random polynomial with the given intercept
 func generatePolynomial(intercept, threshold uint8) ([]byte, error) {
 
@@ -14,8 +18,14 @@ func generatePolynomial(intercept, threshold uint8) ([]byte, error) {
 	polynomial[0] = intercept
 
 	// Fill the rest of the polynomial with cryptographically secure random bytes
-	if _, err := rand.Read(polynomial[1:]); err != nil {
-		return polynomial, err
+	if _, err := randRead(polynomial[1:]); err != nil {
+		return nil, err
+	}
+
+	for polynomial[threshold-1] == 0 {
+		if _, err := randRead(polynomial[threshold-1 : threshold]); err != nil {
+			return nil, err
+		}
 	}
 
 	return polynomial, nil

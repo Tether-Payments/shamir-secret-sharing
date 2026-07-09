@@ -2,10 +2,10 @@
 ---
 <div align="center">
 
-[![Go Report Card](https://goreportcard.com/badge/Tether-Payments/shamir-secret-sharing)](https://goreportcard.com/report/Tether-Payments/shamir-secret-sharing)
-[![codecov](https://codecov.io/gh/Tether-Payments/shamir-secret-sharing/graph/badge.svg?token=TBTZIA620I)](https://codecov.io/gh/Tether-Payments/shamir-secret-sharing)
-[![Maintainability](https://api.codeclimate.com/v1/badges/314cd38ef7019cac4d7b/maintainability)](https://codeclimate.com/github/Tether-Payments/shamir-secret-sharing/maintainability)
-[![CodeQL](https://github.com/Tether-Payments/shamir-secret-sharing/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/Tether-Payments/shamir-secret-sharing/actions/workflows/github-code-scanning/codeql)
+[![Go Report Card](https://goreportcard.com/badge/lydianpay/shamir-secret-sharing)](https://goreportcard.com/report/lydianpay/shamir-secret-sharing)
+[![Code Coverage](https://qlty.sh/gh/lydianpay/projects/shamir-secret-sharing/coverage.svg)](https://qlty.sh/gh/lydianpay/projects/shamir-secret-sharing)
+[![Maintainability](https://qlty.sh/gh/lydianpay/projects/shamir-secret-sharing/maintainability.svg)](https://qlty.sh/gh/lydianpay/projects/shamir-secret-sharing)
+[![CodeQL](https://github.com/lydianpay/shamir-secret-sharing/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/lydianpay/shamir-secret-sharing/actions/workflows/github-code-scanning/codeql)
 
 </div>
 
@@ -26,14 +26,14 @@ shares you choose is met.
 1. Once confirming you have [Go](https://go.dev/doc/install) installed, the command below will add
 `shamir` as a dependency to your Go program.
 ```shell
-go get -u github.com/tether-payments/shamir-secret-sharing
+go get github.com/lydianpay/shamir-secret-sharing
 ```
 2. Import the package into your code
 ```go
 package main
 
 import (
-    "github.com/Tether-Payments/shamir-secret-sharing"
+    "github.com/lydianpay/shamir-secret-sharing"
 )
 ```
 3. Create n number of shares
@@ -55,10 +55,12 @@ import (
 	"encoding/base64"
 	"fmt"
 	"log"
+
+	shamir "github.com/lydianpay/shamir-secret-sharing"
 )
 
 func main() {
-	secret := []byte("Tether Payments Rocks!") // Replace with your secret
+	secret := []byte("my super secret")        // Replace with your secret
 	numberOfShares := 6                        // Number of shares to be created
 	threshold := 3                             // Minimum number of shares required to reconstruct the secret
 
@@ -78,6 +80,6 @@ func main() {
 		log.Fatal(err)
     }
 	
-	fmt.Println("Reconstructed Secret: ", reconstructedSecret)
+	fmt.Printf("Reconstructed Secret: %s\n", reconstructedSecret)
 }
 ```

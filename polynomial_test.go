@@ -1,6 +1,7 @@
 package shamir
 
 import (
+	"errors"
 	"testing"
 )
 
@@ -25,6 +26,51 @@ func TestGeneratePolynomial(t *testing.T) {
 		}
 	}
 
+}
+
+func TestGeneratePolynomialNonZeroLeadingCoeff(t *testing.T) {
+	for _, threshold := range []uint8{2, 3, 16, 255} {
+		for i := 0; i < 10000; i++ {
+			p, err := generatePolynomial(7, threshold)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if p[threshold-1] == 0 {
+				t.Fatalf("leading coefficient is zero for threshold %d", threshold)
+			}
+		}
+	}
+}
+
+func TestGeneratePolynomialRandFailure(t *testing.T) {
+	orig := randRead
+	defer func() { randRead = orig }()
+	randRead = func([]byte) (int, error) { return 0, errors.New("rng failure") }
+
+	if _, err := generatePolynomial(7, 3); err == nil {
+		t.Fatal("expected an error when the RNG fails")
+	}
+}
+
+func TestGeneratePolynomialResampleRandFailure(t *testing.T) {
+	orig := randRead
+	defer func() { randRead = orig }()
+	call := 0
+	randRead = func(b []byte) (int, error) {
+		call++
+		if call == 1 {
+			// Zero-fill so the leading coefficient is 0 and the resample loop runs.
+			for i := range b {
+				b[i] = 0
+			}
+			return len(b), nil
+		}
+		return 0, errors.New("rng failure")
+	}
+
+	if _, err := generatePolynomial(7, 3); err == nil {
+		t.Fatal("expected an error when the RNG fails during resample")
+	}
 }
 
 func TestEvaluate(t *testing.T) {
